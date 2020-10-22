@@ -11,6 +11,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -24,15 +25,18 @@ import java.text.SimpleDateFormat
 
 class MainActivity : AppCompatActivity() {
 
-    // 2. 전역변수 선언
+    private val TAG = MainActivity::class.java.simpleName
+
+    // 1. 전역변수 선언
     val CAMERA_PERMISSION = arrayOf(Manifest.permission.CAMERA)
     val STORAGE_PERMISSION = arrayOf(
-        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
+        Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
+    // 카메라 권한을 얻기 위한 설정 변수
     val REQ_PERMISSION_CAMERA = 98
     val REQ_PERMISSION_STORAGE = 99
 
+    // Object Detection을 하기 위한 카메라, 갤러리 설정 변수
     val ODT_REQ_CAMERA_IMAGE = 101
     val ODT_REQ_GALLERY_IMAGE = 102
 
@@ -40,72 +44,33 @@ class MainActivity : AppCompatActivity() {
     var mPhotoURI: Uri? = null
     var mBitmap: Bitmap? = null
 
-
+    /**
+     * (1) onCreate() :
+     *
+     *      생명주기 가장 첫 실행되는 함수
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Log.d(TAG, ">> onCreate()")
+
         // 3. 권한 체크하기 함수 호출!
         if (checkPermission(STORAGE_PERMISSION, REQ_PERMISSION_STORAGE)) {
-            setViews()
-        }
-
-        //ODT 버튼 클릭시 객체 검출 시작!
-        buttonObjectDetection.setOnClickListener{
-
-        }
-    }
-
-    fun setViews(){
-        buttonCamera.setOnClickListener {
-            openCamera()
-        }
-        buttonGallery.setOnClickListener {
-            openGallery()
-        }
-    }
-
-    fun openCamera() {
-        if (checkPermission(CAMERA_PERMISSION, REQ_PERMISSION_CAMERA)) {
-            dispatchTakePictureIntent()
-        }
-    }
-
-    fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = MediaStore.Images.Media.CONTENT_TYPE
-        startActivityForResult(intent, ODT_REQ_GALLERY_IMAGE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_OK) {
-            when(requestCode){
-                ODT_REQ_CAMERA_IMAGE -> {
-                    if (mPhotoURI != null) {
-                        val bitmap = loadBitmapFromMediaStoreBy(mPhotoURI!!)
-                        mBitmap = bitmap
-//                        imagePreview.setImageBitmap(bitmap)
-
-                        val image = getCapturedImage(mPhotoURI!!)
-                        runObjectDetection(image)
-
-                        mPhotoURI = null // 사용 후 null 처리
-                    }
-                }
-                ODT_REQ_GALLERY_IMAGE -> {
-                    val uri = data?.data
-//                    imagePreview.setImageURI(uri)
-                    val image = getCapturedImage(uri!!)
-                    runObjectDetection(image)
-                }
+            if (checkPermission(CAMERA_PERMISSION, REQ_PERMISSION_CAMERA)) {
+                setViews()
             }
         }
     }
+
     /**
-     * 권한처리
+     * (2) checkPermission() :
+     *
+     *      권한처리를 수행하는 함수
      */
     fun checkPermission(permissions: Array<out String>, flag: Int) : Boolean {
+        Log.d(TAG, ">> checkPermission()")
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (permission in permissions) {
                 if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -116,10 +81,13 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
+    
+    /**
+     * (3) onRequestPermissionsResult() :
+     *
+     *      Permission(권한) 처리 후 결과를 확인하는 함수
+     */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             REQ_PERMISSION_STORAGE -> {
                 for (grant in grantResults) {
@@ -130,7 +98,6 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
                 }
-
                 setViews()
             }
             REQ_PERMISSION_CAMERA -> {
@@ -141,28 +108,103 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
                 }
-                openCamera()
+
+                if (checkPermission(STORAGE_PERMISSION, REQ_PERMISSION_STORAGE)) {
+                    setViews()
+                }
             }
         }
     }
 
     /**
-     *  원본 카메라 이미지 저장
+     * (4) setViews() :
+     *
+     *      Permission(권한) 처리 후 버튼 클릭을 대기하는 뷰 함수
      */
-    // photoURI 에 이미지 세팅할 카메라 앱 호출하기
-    private fun dispatchTakePictureIntent() {
-        // 카메라 인텐트 생성
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    fun setViews(){
+        Log.d(TAG, ">> setViews()")
 
-        createImageUri(newFileName(), "image/jpg")?.let { uri ->
-            mPhotoURI = uri
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI)
-            startActivityForResult(takePictureIntent, ODT_REQ_CAMERA_IMAGE)
+        //카메라 버튼 클릭
+        buttonCamera.setOnClickListener {
+            openCamera()
+        }
+        //갤러리 버튼 클릭
+        buttonGallery.setOnClickListener {
+            openGallery()
         }
     }
 
-    // 미디어스토어에 카메라 이미지를 저장할 URI를 미리 생성하기
+    /**
+     * (5) openCamera() :
+     *
+     *      시스템 카메라 앱을 호출하여 수행하는 함수
+     */
+    fun openCamera() {
+        Log.d(TAG, ">> openCamera()")
+
+        if (checkPermission(CAMERA_PERMISSION, REQ_PERMISSION_CAMERA)) {
+            
+            // 시스템 카메라 앱 호출 Intent
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+
+            createImageUri(newFileName(), "image/jpg")?.let { uri ->
+                mPhotoURI = uri
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI)
+                startActivityForResult(takePictureIntent, ODT_REQ_CAMERA_IMAGE)
+            }
+        }
+    }
+
+    /**
+     * (6) openGallery() :
+     *
+     *      시스템 갤러리 앱을 호출하여 수행하는 함수
+     */
+    fun openGallery() {
+        Log.d(TAG, ">> openGallery()")
+
+        // 시스템 갤러리 앱 호출 Intent
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        startActivityForResult(intent, ODT_REQ_GALLERY_IMAGE)
+    }
+
+    /**
+     * (7) onActivityResult() :
+     *
+     *      카메라, 갤러리 앱 호출 후 결과를 수행하는 함수
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK) {
+            var image: Bitmap? = null
+            when(requestCode){
+
+                ODT_REQ_CAMERA_IMAGE -> {
+                    if (mPhotoURI != null) {
+                        val bitmap = loadBitmapFromMedia(mPhotoURI!!)
+                        mBitmap = bitmap
+                        image = getCapturedImage(mPhotoURI!!)
+                    }
+                }
+                ODT_REQ_GALLERY_IMAGE -> {
+                    val uri = data?.data
+                    image = getCapturedImage(uri!!)
+                }
+            }
+            runObjectDetection(image!!)
+            mPhotoURI = null // 사용 후 null 처리
+        }
+    }
+
+    /**
+     * (8) createImageUri() :
+     *
+     *      미디어스토어에 카메라 이미지를 저장할 URI를 미리 생성하는 함수
+     */
     fun createImageUri(filename: String, mimeType: String) : Uri? {
+        Log.d(TAG, ">> createImageUri()")
+
         var values = ContentValues()
         values.put(MediaStore.Images.Media.DISPLAY_NAME, filename)
         values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
@@ -170,16 +212,28 @@ class MainActivity : AppCompatActivity() {
         return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
     }
 
-    // 새파일 이름 생성
+    /**
+     * (9) newFileName() :
+     *      
+     *      촬영된 사진의 파일 이름을 생성하는 함수
+     */
     fun newFileName() : String {
+        Log.d(TAG, ">> newFileName()")
+
         val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
         val filename = sdf.format(System.currentTimeMillis())
 
         return "$filename.jpg"
     }
 
-    // 미디어 스토어에서 url로 이미지 불러오기
-    fun loadBitmapFromMediaStoreBy(photoUri: Uri): Bitmap? {
+    /**
+     * (10) loadBitmapFromMedia() :
+     *      Camera 촬영으로 얻은 원본 이미지 가져오기
+     *      미디어 스토어에서 uri로 이미지 불러오는 함수
+     */
+    fun loadBitmapFromMedia(photoUri: Uri): Bitmap? {
+        Log.d(TAG, ">> loadBitmapFromMedia()")
+
         var image: Bitmap? = null
         try {
             image = if (Build.VERSION.SDK_INT > 27) { // Api 버전별 이미지 처리
@@ -196,10 +250,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * getCapturedImage():
+     * (11) getCapturedImage():
      *     Decodes and center crops the captured image from camera.
+     *     Object Detection을 수행하기 전에 이미지 처리를 수행하는 함수
      */
     private fun getCapturedImage(imgUri: Uri): Bitmap {
+        Log.d(TAG, ">> getCapturedImage()")
 
         val srcImage = FirebaseVisionImage
             .fromFilePath(baseContext, imgUri!!).bitmap
@@ -219,13 +275,16 @@ class MainActivity : AppCompatActivity() {
         )
         srcImage.recycle()
         return scaledImage
-
     }
 
     /**
-     * MLKit Object Detection Function
+     * (12) runObjectDetection() :
+     *      MLKit Object Detection Function
+     *      Object Detection을 수행하는 함수
      */
     private fun runObjectDetection(bitmap: Bitmap) {
+        Log.d(TAG, ">> runObjectDetection()")
+
         // Step 1: create MLKit's VisionImage object
         val image = FirebaseVisionImage.fromBitmap(bitmap)
 
@@ -259,10 +318,16 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // 토스트 메세지 표시 하는 함수
+    /**
+     * (13) showToast() :
+     *      Make Toast Function
+     *     토스트 메세지 표시 하는 함수
+     */
     private fun showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
+        Log.d(TAG, ">> showToast()")
+
         val toast = Toast.makeText(applicationContext, message, duration)
-        toast.setGravity(Gravity.CENTER, 0, 0)
+        toast.setGravity(Gravity.CENTER, 0, 0) // 토스트 가운데 정렬
         toast.show()
     }
 }

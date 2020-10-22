@@ -10,9 +10,10 @@
         android:id="@+id/buttonCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:background="#FFFF33"
-        android:text="카메라기사진으로 사물찾기"
-        android:textSize="12sp"
+        android:text="카메라촬영으로 OD"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -20,19 +21,20 @@
         android:id="@+id/imagePreview"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:src="@drawable/object_bg"
         app:layout_constraintBottom_toTopOf="@+id/buttonCamera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/object_bg" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:background="#FF99CC"
-        android:text="갤러리사진으로 사물찾기"
-        android:textSize="12sp"
+        android:text="갤러리사진으로 OD"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
