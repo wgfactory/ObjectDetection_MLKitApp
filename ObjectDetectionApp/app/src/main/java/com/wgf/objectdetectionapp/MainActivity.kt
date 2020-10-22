@@ -2,6 +2,7 @@ package com.wgf.objectdetectionapp
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
+import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -44,6 +46,8 @@ class MainActivity : AppCompatActivity() {
     var mPhotoURI: Uri? = null
     var mBitmap: Bitmap? = null
 
+    lateinit var waitingDialog: AlertDialog
+
     /**
      * (1) onCreate() :
      *
@@ -61,6 +65,12 @@ class MainActivity : AppCompatActivity() {
                 setViews()
             }
         }
+
+        // "잠시만 기다려 주세용!" 팝업창 코드
+        waitingDialog = SpotsDialog.Builder().setContext(this)
+            .setMessage("잠시만 기다려 주세용!")
+            .setCancelable(false)
+            .build()
     }
 
     /**
@@ -142,6 +152,8 @@ class MainActivity : AppCompatActivity() {
     fun openCamera() {
         Log.d(TAG, ">> openCamera()")
 
+        if(imagePreview != null) imagePreview.setImageBitmap(null);
+
         if (checkPermission(CAMERA_PERMISSION, REQ_PERMISSION_CAMERA)) {
             
             // 시스템 카메라 앱 호출 Intent
@@ -162,6 +174,8 @@ class MainActivity : AppCompatActivity() {
      */
     fun openGallery() {
         Log.d(TAG, ">> openGallery()")
+
+        if(imagePreview != null) imagePreview.setImageBitmap(null);
 
         // 시스템 갤러리 앱 호출 Intent
         val intent = Intent(Intent.ACTION_PICK)
@@ -184,6 +198,9 @@ class MainActivity : AppCompatActivity() {
                     if (mPhotoURI != null) {
                         val bitmap = loadBitmapFromMedia(mPhotoURI!!)
                         mBitmap = bitmap
+
+                        waitingDialog.show()
+
                         image = getCapturedImage(mPhotoURI!!)
                     }
                 }
@@ -304,16 +321,19 @@ class MainActivity : AppCompatActivity() {
 
                 if(it.size == 0) {
                     showToast("아쉽지만 이미지에서 사물을 못찾았습니다. \n 다시 시도해주세요!")
+                    waitingDialog.dismiss()
                 }
                 val drawingView = DrawingView(applicationContext, it)
                 drawingView.draw(Canvas(bitmap))
 
                 runOnUiThread {
+                    waitingDialog.dismiss()
                     imagePreview.setImageBitmap(bitmap)
                 }
             }
             .addOnFailureListener {
                 // Task failed with an exception
+                waitingDialog.dismiss()
                 showToast("Oops, something went wrong!")
             }
     }
