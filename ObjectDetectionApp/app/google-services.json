@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "615945742243",
+    "firebase_url": "https://smartfarmapp-64586.firebaseio.com",
+    "project_id": "smartfarmapp-64586",
+    "storage_bucket": "smartfarmapp-64586.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615945742243:android:695b9543404c4a1f34dc16",
+        "android_client_info": {
+          "package_name": "com.wgf.objectdetectionapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "615945742243-6gruhg30d3hidtie8idalgd1ik32qp86.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB924a-mGZRF8maDa9IOI4r6oD-RVG5N_A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "615945742243-6gruhg30d3hidtie8idalgd1ik32qp86.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
