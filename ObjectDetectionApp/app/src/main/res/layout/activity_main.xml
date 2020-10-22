@@ -11,11 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#FFFF33"
-        android:text="카메라"
-        android:textSize="15sp"
+        android:text="카메라기사진으로 사물찾기"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonGallery"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -26,30 +24,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:src="@drawable/object_bg" />
 
     <Button
         android:id="@+id/buttonGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#FF99CC"
-        android:text="갤러리"
-        android:textSize="15sp"
+        android:text="갤러리사진으로 사물찾기"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toEndOf="@+id/buttonCamera" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/buttonObjectDetection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#FF99CC"
         android:text="Object Detection"
-        android:textSize="15sp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintStart_toEndOf="@+id/buttonGallery"
-        android:background="#FF99CC"/>
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
