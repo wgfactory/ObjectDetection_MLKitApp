@@ -34,11 +34,11 @@ class MainActivity : AppCompatActivity() {
     val STORAGE_PERMISSION = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
-    // 카메라 권한을 얻기 위한 설정 변수
+    // 카메라 권한을 얻기 위한 요청코드 변수
     val REQ_PERMISSION_CAMERA = 98
     val REQ_PERMISSION_STORAGE = 99
 
-    // Object Detection을 하기 위한 카메라, 갤러리 설정 변수
+    // Object Detection을 하기 위한 카메라, 갤러리 요청코드 변수
     val ODT_REQ_CAMERA_IMAGE = 101
     val ODT_REQ_GALLERY_IMAGE = 102
 
