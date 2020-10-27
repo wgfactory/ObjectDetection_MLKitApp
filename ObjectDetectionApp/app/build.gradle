@@ -46,6 +46,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // MLKit ODT libraries
-    implementation 'com.google.firebase:firebase-ml-vision:20.0.0'
-    implementation 'com.google.firebase:firebase-ml-vision-object-detection-model:16.0.0'
+    implementation 'com.google.mlkit:object-detection:16.2.1'
+
+    //dialog
+    implementation 'com.github.d-max:spots-dialog:1.1@aar'
 }

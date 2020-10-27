@@ -15,16 +15,16 @@ import android.view.Gravity
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.objects.ObjectDetection
+import com.google.mlkit.vision.objects.defaults.ObjectDetectorOptions
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 
 class MainActivity : AppCompatActivity() {
 
-    // 2. 전역변수 선언
+    // 1. 전역변수 선언
     val CAMERA_PERMISSION = arrayOf(Manifest.permission.CAMERA)
     val STORAGE_PERMISSION = arrayOf(
         Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -48,11 +48,6 @@ class MainActivity : AppCompatActivity() {
         // 3. 권한 체크하기 함수 호출!
         if (checkPermission(STORAGE_PERMISSION, REQ_PERMISSION_STORAGE)) {
             setViews()
-        }
-
-        //ODT 버튼 클릭시 객체 검출 시작!
-        buttonObjectDetection.setOnClickListener{
-
         }
     }
 
@@ -201,13 +196,21 @@ class MainActivity : AppCompatActivity() {
      */
     private fun getCapturedImage(imgUri: Uri): Bitmap {
 
-        val srcImage = FirebaseVisionImage
-            .fromFilePath(baseContext, imgUri!!).bitmap
+        //FirebaseVision Package
+/*        val srcImage = FirebaseVisionImage
+            .fromFilePath(baseContext, imgUri!!).bitmap*/
+
+        var srcImage: Bitmap? = null
+        try {
+            srcImage = InputImage.fromFilePath(baseContext, imgUri!!).bitmapInternal
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
 
         // crop image to match imageView's aspect ratio
         val scaleFactor = Math.min(
-            srcImage.width / imagePreview.width.toFloat(),
-            srcImage.height / imagePreview.height.toFloat()
+            srcImage!!.width / imagePreview.width.toFloat(),
+            srcImage!!.height / imagePreview.height.toFloat()
         )
 
         val deltaWidth = (srcImage.width - imagePreview.width * scaleFactor).toInt()
@@ -217,7 +220,7 @@ class MainActivity : AppCompatActivity() {
             srcImage, deltaWidth / 2, deltaHeight / 2,
             srcImage.width - deltaWidth, srcImage.height - deltaHeight
         )
-        srcImage.recycle()
+//        srcImage.recycle()
         return scaledImage
 
     }
@@ -226,8 +229,10 @@ class MainActivity : AppCompatActivity() {
      * MLKit Object Detection Function
      */
     private fun runObjectDetection(bitmap: Bitmap) {
+
+        // FireBaseVision Package
         // Step 1: create MLKit's VisionImage object
-        val image = FirebaseVisionImage.fromBitmap(bitmap)
+/*        val image = FirebaseVisionImage.fromBitmap(bitmap)
 
         // Step 2: acquire detector object
         val options = FirebaseVisionObjectDetectorOptions.Builder()
@@ -235,10 +240,22 @@ class MainActivity : AppCompatActivity() {
             .enableMultipleObjects()
             .enableClassification()
             .build()
-        val detector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)
+        val detector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)*/
+
+        val image = InputImage.fromBitmap(bitmap, 0)
+
+        // Multiple object detection in static images
+        val options = ObjectDetectorOptions.Builder()
+            .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
+            .enableMultipleObjects()
+            .enableClassification()  // Optional
+            .build()
+        val detector = ObjectDetection.getClient(options)
+
 
         // Step 3: feed given image to detector and setup callback
-        detector.processImage(image)
+//        detector.processImage(image)
+        detector.process(image)
             .addOnSuccessListener {
                 // Task completed successfully
                 // Post-detection processing : draw result
