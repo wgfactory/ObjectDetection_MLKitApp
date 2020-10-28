@@ -94,8 +94,7 @@ class MainActivity : AppCompatActivity() {
             REQ_PERMISSION_STORAGE -> {
                 for (grant in grantResults) {
                     if (grant != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this, "저장소 권한을 승인해야지만 앱을 사용할 수 있습니다.", Toast.LENGTH_LONG)
-                                .show()
+                        showToast("저장소 권한을 승인해야지만 앱을 사용할 수 있습니다.")
                         finish()
                         return
                     }
@@ -106,8 +105,7 @@ class MainActivity : AppCompatActivity() {
             REQ_PERMISSION_CAMERA -> {
                 for (grant in grantResults) {
                     if (grant != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this, "카메라 권한을 승인해야지만 카메라를 사용할 수 있습니다.", Toast.LENGTH_LONG)
-                                .show()
+                        showToast("카메라 권한을 승인해야지만 카메라를 사용할 수 있습니다.")
                         return
                     }
                 }
@@ -182,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                     if (mPhotoURI != null) {
                         val bitmap = loadBitmapFromMediaStoreBy(mPhotoURI!!)
                         mBitmap = bitmap
-                        val image = getCapturedImage(mPhotoURI!!)
+                            val image = getCapturedImage(mPhotoURI!!)
                         runObjectDetection(image)
 
                         mPhotoURI = null // 사용 후 null 처리
