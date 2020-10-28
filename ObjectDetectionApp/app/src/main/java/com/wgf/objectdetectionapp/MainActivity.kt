@@ -280,7 +280,6 @@ class MainActivity : AppCompatActivity() {
         )
         srcImage.recycle()
         return scaledImage
-
     }
 
     /**
@@ -291,31 +290,20 @@ class MainActivity : AppCompatActivity() {
      */
     private fun runObjectDetection(bitmap: Bitmap) {
         Log.d(TAG, ">> runObjectDetection()")
-        // FireBaseVision Package
+
         // Step 1: create MLKit's VisionImage object
-/*        val image = FirebaseVisionImage.fromBitmap(bitmap)
-
-        // Step 2: acquire detector object
-        val options = FirebaseVisionObjectDetectorOptions.Builder()
-            .setDetectorMode(FirebaseVisionObjectDetectorOptions.SINGLE_IMAGE_MODE)
-            .enableMultipleObjects()
-            .enableClassification()
-            .build()
-        val detector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options)*/
-
         val image = InputImage.fromBitmap(bitmap, 0)
 
-        // Multiple object detection in static images
+        // Step 2: acquire detector object
         val options = ObjectDetectorOptions.Builder()
             .setDetectorMode(ObjectDetectorOptions.SINGLE_IMAGE_MODE)
             .enableMultipleObjects()
             .enableClassification()  // Optional
             .build()
+
         val detector = ObjectDetection.getClient(options)
 
-
         // Step 3: feed given image to detector and setup callback
-//        detector.processImage(image)
         detector.process(image)
             .addOnSuccessListener {
                 // Task completed successfully
