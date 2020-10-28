@@ -80,8 +80,6 @@ class MainActivity : AppCompatActivity() {
                     if (mPhotoURI != null) {
                         val bitmap = loadBitmapFromMediaStoreBy(mPhotoURI!!)
                         mBitmap = bitmap
-//                        imagePreview.setImageBitmap(bitmap)
-
                         val image = getCapturedImage(mPhotoURI!!)
                         runObjectDetection(image)
 
@@ -90,7 +88,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 ODT_REQ_GALLERY_IMAGE -> {
                     val uri = data?.data
-//                    imagePreview.setImageURI(uri)
                     val image = getCapturedImage(uri!!)
                     runObjectDetection(image)
                 }
@@ -220,7 +217,7 @@ class MainActivity : AppCompatActivity() {
             srcImage, deltaWidth / 2, deltaHeight / 2,
             srcImage.width - deltaWidth, srcImage.height - deltaHeight
         )
-//        srcImage.recycle()
+        srcImage.recycle()
         return scaledImage
 
     }

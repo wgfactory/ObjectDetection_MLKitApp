@@ -57,7 +57,6 @@ class DrawingView(context: Context, var visionObjects: List<DetectedObject>) : V
                     tags.add("Confidence: ${label.confidence!!.times(100).toInt()}%")
                 }
 
-
                 var tagSize = Rect(0, 0, 0, 0)
                 var maxLen = 0
                 var index: Int = -1
