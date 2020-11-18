@@ -12,6 +12,6 @@
     <ImageView
         android:layout_width="250dp"
         android:layout_height="250dp"
-        android:src="@drawable/logo_text" />
+        android:src="@drawable/objectapp_logo_wgf" />
 
 </LinearLayout>
