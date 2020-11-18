@@ -19,4 +19,4 @@
 
 ## 결과
 
-<img src="./Demo/object_detection_demo.mp4" width="250"/>
+<img src="./Demo/object_detection_demo.gif" width="250"/>
