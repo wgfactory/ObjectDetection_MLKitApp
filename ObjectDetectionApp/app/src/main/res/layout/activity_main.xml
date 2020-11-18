@@ -17,24 +17,24 @@
         android:src="@drawable/object_bg" />
 
 
-    <Button
+    <ImageView
         android:id="@+id/buttonCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#FFFF33"
-        android:text="카메라기사진으로 사물찾기"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:textSize="12sp"
+        android:src="@drawable/camera"
+        android:layout_marginLeft="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 
-    <Button
+    <ImageView
         android:id="@+id/buttonGallery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#FF99CC"
-        android:text="갤러리사진으로 사물찾기"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:textSize="12sp"
+        android:src="@drawable/gallery"
+        android:layout_marginRight="70dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

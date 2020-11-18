@@ -48,6 +48,9 @@ dependencies {
     // MLKit ODT libraries
     implementation 'com.google.mlkit:object-detection:16.2.1'
 
+    // Firebase Remote Config
+    implementation 'com.google.firebase:firebase-config:19.2.0'
+
     //dialog
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
 }

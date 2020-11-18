@@ -252,9 +252,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun getCapturedImage(imgUri: Uri): Bitmap {
         Log.d(TAG, ">> getCapturedImage()")
-        //FirebaseVision Package
-/*        val srcImage = FirebaseVisionImage
-            .fromFilePath(baseContext, imgUri!!).bitmap*/
 
         var srcImage: Bitmap? = null
         try {
