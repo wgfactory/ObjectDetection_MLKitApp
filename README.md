@@ -5,6 +5,7 @@
 ## 이 프로젝트는 안드로이드 앱의 카메라를 사용하여 Object Detection을 수행할 수 있습니다. 🚀
 - 1️⃣ Android APK 설치 or Android Studio Project 파일을 Clone 받아서 직접! 업로드
   - 💚 [APK 바로 다운로드 링크!](https://www.dropbox.com/s/07h2h5req2p92fb/Object_Detection_MLKit_App.apk?dl=1)
+  - 💚 [안드로이드 앱 다운로드 링크!](https://play.google.com/store/apps/details?id=com.wgf.objectdetectionapp)
 - 2️⃣ 어플 실행!
 - 3️⃣ 카메라 or 갤러리에 저장된 사진을 사용하여 ML Kit API의 Object Detection 수행!
 - 4️⃣ Detection 된 Object 빨간 박스로 그려주기
